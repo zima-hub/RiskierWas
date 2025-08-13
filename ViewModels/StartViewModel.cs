@@ -37,12 +37,25 @@ namespace RiskierWas.ViewModels
 
         private void StartGame()
         {
-            _main.Teams.Clear();
-            for (int i = 0; i < TeamCount; i++)
+            
+            for (int i = 0; i < _main.Teams.Count; i++)
             {
-                _main.Teams.Add(Teams[i]);
+                var t = _main.Teams[i];
+                t.Score = 0;
+                t.PendingScore = 0;                 // NEU
+                if (string.IsNullOrWhiteSpace(t.Name))
+                    t.Name = $"Team {i + 1}";
             }
+           
+            // Index sauber setzen
             _main.CurrentTeamIndex = 0;
+
+            // Falls jemand alle Teams entfernt hat: mindestens 2 anlegen
+            if (_main.Teams.Count == 0)
+            {
+                _main.Teams.Add(new Team { Name = "Team 1" });
+                _main.Teams.Add(new Team { Name = "Team 2" });
+            }
             _main.NavigateToGame();
         }
 
