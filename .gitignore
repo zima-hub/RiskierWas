@@ -1,0 +1,22 @@
+# Visual Studio / Build
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# WPF-Temp/Designer
+*_wpftmp.*
+*.g.cs
+*.g.i.cs
+*.i.cache
+*.designer.*
+*.nuget.*.json
+*.nuget.g.props
+*.nuget.g.targets
+
+# Sonstiges
+publish/
+artifacts/
+*.patch
+*.zip
