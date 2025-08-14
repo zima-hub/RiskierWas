@@ -37,14 +37,41 @@ namespace RiskierWas.ViewModels
 
         private void StartGame()
         {
-            _main.Teams.Clear();
-            for (int i = 0; i < TeamCount; i++)
-            {
-                _main.Teams.Add(Teams[i]);
-            }
-            _main.CurrentTeamIndex = 0;
+            // Teams passend zur Auswahl neu aufbauen
+            RebuildTeams();
+
+            // los geht's
             _main.NavigateToGame();
         }
+
+
+        private void RebuildTeams()
+        {
+            // TeamCount auf 2..4 begrenzen
+            var count = TeamCount;
+            if (count < 2) count = 2;
+            if (count > 4) count = 4;
+
+            // _main.Teams neu aufbauen aus den ersten N Templates (this.Teams)
+            _main.Teams.Clear();
+            for (int i = 0; i < count; i++)
+            {
+                string name = (i < Teams.Count && !string.IsNullOrWhiteSpace(Teams[i].Name))
+                                ? Teams[i].Name
+                                : $"Team {i + 1}";
+
+                _main.Teams.Add(new Team
+                {
+                    Name = name,
+                    Score = 0,
+                    PendingScore = 0
+                });
+            }
+
+            // aktives Team auf Team 1 setzen
+            _main.CurrentTeamIndex = 0;
+        }
+
 
         private void LoadQuestions()
         {

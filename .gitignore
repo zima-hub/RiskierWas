@@ -1,7 +1,7 @@
 # Visual Studio / .NET
+.vs/
 bin/
 obj/
-.vs/
 *.user
 *.suo
 *.aps
@@ -10,3 +10,19 @@ obj/
 *.VC.db
 *.cache
 *.ide/
+
+# WPF-Temp/Designer
+*_wpftmp.*
+*.g.cs
+*.g.i.cs
+*.i.cache
+*.designer.*
+*.nuget.*.json
+*.nuget.g.props
+*.nuget.g.targets
+
+# Sonstiges
+publish/
+artifacts/
+*.patch
+*.zip
