@@ -3,64 +3,87 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:models="clr-namespace:RiskierWas.Models"
              mc:Ignorable="d">
-    <Grid>
+
+    <Grid Background="#0D0D0D">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="380"/>
+            <!-- Fragenliste -->
+            <ColumnDefinition Width="16"/>
             <ColumnDefinition Width="*"/>
+            <!-- Details -->
         </Grid.ColumnDefinitions>
 
-        <!-- Left list -->
-        <StackPanel Grid.Column="0" Margin="8">
-            <TextBlock Text="Fragen" Foreground="White" FontSize="20" Margin="0,0,0,8"/>
-            <ListBox ItemsSource="{Binding Questions}" SelectedItem="{Binding SelectedQuestion}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <CheckBox IsChecked="{Binding Selected}" Margin="0,0,8,0"/>
-                            <TextBlock Text="{Binding Text}" Width="240" TextTrimming="CharacterEllipsis"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                <Button Content="Neue Frage" Command="{Binding AddQuestionCommand}" Padding="8,6" Margin="0,0,8,0"/>
-                <Button Content="Löschen" Command="{Binding RemoveQuestionCommand}" Padding="8,6"/>
+        <!-- Toolbar -->
+        <DockPanel Grid.ColumnSpan="3" LastChildFill="False" Margin="12,12,12,0" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Alle abwählen"
+                        Command="{Binding DeselectAllCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
+                <Button Content="20 zufällige Fragen"
+                        Command="{Binding SelectRandom20Command}"
+                        Margin="0,0,8,0" Padding="10,6"/>
+                <Button Content="JSON exportieren…"
+                        Command="{Binding ExportJsonCommand}"
+                        Padding="10,6"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                <Button Content="JSON exportieren…" Command="{Binding ExportJsonCommand}" Padding="8,6" Margin="0,0,8,0"/>
-                <Button Content="Zurück" Command="{Binding BackCommand}" Padding="8,6"/>
-            </StackPanel>
-        </StackPanel>
+        </DockPanel>
 
-        <!-- Editor right -->
-        <StackPanel Grid.Column="1" Margin="8" DataContext="{Binding SelectedQuestion}">
-            <TextBlock Text="Fragetext" Foreground="White" FontSize="16"/>
-            <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
-
-            <TextBlock Text="Antworten" Foreground="White" FontSize="16" Margin="0,12,0,0"/>
-            <ItemsControl ItemsSource="{Binding Answers}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type models:Answer}">
-                        <Border Margin="0,6,0,6" Padding="8" CornerRadius="8" Background="#111827">
-                            <DockPanel>
-                                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
-                                    <CheckBox Content="richtig" IsChecked="{Binding Correct}" Foreground="White" VerticalAlignment="Center" Margin="0,0,8,0"/>
-                                    <Button Content="Entfernen" Command="{Binding DataContext.RemoveAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" Padding="6,4"/>
-                                </StackPanel>
-                                <StackPanel>
-                                    <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,4"/>
-                                    <TextBox Text="{Binding Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="0,4,0,0"/>
-                                </StackPanel>
+        <!-- Linke Spalte: Fragenliste (scrollbar) -->
+        <Border Grid.Column="0" Margin="12,56,0,12" Background="#0F172A" CornerRadius="12" Padding="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ListBox ItemsSource="{Binding Questions}"
+                         SelectedItem="{Binding SelectedQuestion}"
+                         Background="Transparent" BorderThickness="0"
+                         VirtualizingPanel.IsVirtualizing="True"
+                         VirtualizingPanel.ScrollUnit="Pixel"
+                         ScrollViewer.CanContentScroll="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <DockPanel Margin="0,4">
+                                <CheckBox IsChecked="{Binding Selected}" Margin="0,0,8,0"/>
+                                <TextBlock Text="{Binding Text}" Foreground="White" TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis" />
                             </DockPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+        </Border>
 
-            <Button Content="Antwort hinzufügen" Command="{Binding DataContext.AddAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" Padding="8,6" Margin="0,8,0,0"/>
-        </StackPanel>
+        <!-- rechte Spalte: Detailbereich (scrollbar) -->
+        <Border Grid.Column="2" Margin="0,56,12,12" Background="#0F172A" CornerRadius="12" Padding="12">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="Fragetext" Foreground="White" FontSize="18" Margin="0,0,0,6"/>
+                    <TextBox Text="{Binding SelectedQuestion.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="True" TextWrapping="Wrap"
+                             MinHeight="80" VerticalScrollBarVisibility="Auto"/>
+
+                    <TextBlock Text="Antworten" Foreground="White" FontSize="18" Margin="0,16,0,6"/>
+                    <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <DockPanel Margin="0,6">
+                                    <Button Content="Entfernen"
+                                            Command="{Binding DataContext.RemoveAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}" DockPanel.Dock="Right" Margin="8,0,0,0"/>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0,0,0">
+                                        <CheckBox IsChecked="{Binding Correct}" VerticalAlignment="Center" Content="richtig" Foreground="White"/>
+                                    </StackPanel>
+                                    <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                             MinWidth="300" Margin="0,0,8,0"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <Button Content="Antwort hinzufügen"
+                                Command="{Binding AddAnswerCommand}" Padding="10,6" />
+                    </StackPanel>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
     </Grid>
 </UserControl>
