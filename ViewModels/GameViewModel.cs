@@ -14,7 +14,18 @@ namespace RiskierWas.ViewModels
         private int _questionIndex = -1;
         private int _nextPoints = 50;
 
-        public Question? CurrentQuestion { get; set; }
+        private Question? _currentQuestion;
+        public Question? CurrentQuestion
+        {
+            get => _currentQuestion;
+            set
+            {
+                if (_currentQuestion == value) return;
+                _currentQuestion = value;
+                OnPropertyChanged(nameof(CurrentQuestion));  // Text, Answers etc. aktualisieren
+                OnPropertyChanged(nameof(InfoLine));         // Statuszeile aktualisieren
+            }
+        }
         public ObservableCollection<Team> Teams => _main.Teams;
         public Team CurrentTeam
         {
