@@ -23,9 +23,7 @@
                 <Button Content="20 zufällige Fragen"
                         Command="{Binding SelectRandom20Command}"
                         Margin="0,0,8,0" Padding="10,6"/>
-                <Button Content="JSON exportieren…"
-                        Command="{Binding ExportJsonCommand}"
-                        Padding="10,6"/>
+                <Button Content="Speichern" Command="{Binding SaveCommand}" Padding="10,6"/>
             </StackPanel>
         </DockPanel>
 
