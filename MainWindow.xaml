@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:RiskierWas.ViewModels"
         mc:Ignorable="d"
-        Title="Riskier was!" Height="800" Width="1200" WindowStartupLocation="CenterScreen">
+        Title="Riskier was!"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized">
+
     <Window.DataContext>
         <vm:MainViewModel />
     </Window.DataContext>
+
     <Grid Background="#0D0D0D">
         <Border Margin="16" Background="#111827" CornerRadius="16" Padding="16">
             <ContentControl Content="{Binding CurrentViewModel}"/>
