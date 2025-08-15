@@ -16,36 +16,36 @@
         <!-- Toolbar -->
         <DockPanel Grid.Row="0" LastChildFill="False" Margin="12,12,12,0" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
-                <!-- NEU: Zurück-Button -->
                 <Button Content="← Zurück"
-                Command="{Binding BackCommand}"
-                Margin="0,0,16,0" Padding="10,6"/>
+                        Command="{Binding BackCommand}"
+                        Margin="0,0,16,0" Padding="10,6"/>
 
                 <Button Content="Neue Frage"
-                Command="{Binding AddQuestionCommand}"
-                Margin="0,0,8,0" Padding="10,6"/>
+                        Command="{Binding AddQuestionCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="Frage löschen"
-                Command="{Binding RemoveQuestionCommand}"
-                Margin="0,0,16,0" Padding="10,6"/>
+                        Command="{Binding RemoveQuestionCommand}"
+                        Margin="0,0,16,0" Padding="10,6"/>
 
                 <Button Content="Alle abwählen"
-                Command="{Binding DeselectAllCommand}"
-                Margin="0,0,8,0" Padding="10,6"/>
+                        Command="{Binding DeselectAllCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="20 zufällige Fragen"
-                Command="{Binding SelectRandom20Command}"
-                Margin="0,0,16,0" Padding="10,6"/>
+                        Command="{Binding SelectRandom20Command}"
+                        Margin="0,0,16,0" Padding="10,6"/>
 
                 <Button Content="Speichern"
-                Command="{Binding SaveCommand}"
-                Margin="0,0,8,0" Padding="10,6"/>
+                        Command="{Binding SaveCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="Speichern unter…"
-                Command="{Binding SaveAsCommand}"
-                Padding="10,6"/>
+                        Command="{Binding SaveAsCommand}"
+                        Padding="10,6"/>
             </StackPanel>
         </DockPanel>
+
         <!-- Inhalt: zwei Spalten -->
         <Grid Grid.Row="1" Margin="12,8,12,12">
             <Grid.ColumnDefinitions>
@@ -56,57 +56,72 @@
                 <!-- Details -->
             </Grid.ColumnDefinitions>
 
-            <!-- Linke Spalte: Fragenliste (ListBox hat eigenen ScrollViewer – keinen zusätzlichen außenrum!) -->
+            <!-- Linke Spalte: Fragenliste (ListBox scrollt selbst) -->
             <Border Grid.Column="0" Background="#0F172A" CornerRadius="12" Padding="8">
-                <ListBox x:Name="QuestionsList"
-                         ItemsSource="{Binding Questions}"
-                         SelectedItem="{Binding SelectedQuestion}"
-                         Background="Transparent"
-                         BorderThickness="0"
-                         VirtualizingPanel.IsVirtualizing="True"
-                         VirtualizingPanel.ScrollUnit="Pixel"
-                         ScrollViewer.CanContentScroll="False">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
 
-                    <!-- Entf-Taste löscht die aktuell ausgewählte Frage -->
-                    <ListBox.InputBindings>
-                        <KeyBinding Key="Delete" Command="{Binding RemoveQuestionCommand}"/>
-                    </ListBox.InputBindings>
+                    <TextBlock Text="Fragen (Häkchen = im nächsten Spiel)"
+                               Foreground="White" Margin="0,0,0,8" FontWeight="Bold"/>
 
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <!-- Genau EIN Root-Element: DockPanel -->
-                            <DockPanel Margin="0,4">
-                                <!-- ✕-Button zum direkten Löschen dieses Items -->
-                                <Button Content="✕"
-                                        DockPanel.Dock="Right"
-                                        Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                        CommandParameter="{Binding}"
-                                        Width="24" Height="24"
-                                        Margin="6,0,0,0"
-                                        ToolTip="Frage löschen"/>
+                    <ListBox Grid.Row="1"
+                             x:Name="QuestionsList"
+                             ItemsSource="{Binding Questions}"
+                             SelectedItem="{Binding SelectedQuestion}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling"
+                             VirtualizingPanel.ScrollUnit="Pixel"
+                             ScrollViewer.CanContentScroll="True">
+                        <!-- Entf-Taste löscht die aktuell ausgewählte Frage -->
+                        <ListBox.InputBindings>
+                            <KeyBinding Key="Delete" Command="{Binding RemoveQuestionCommand}"/>
+                        </ListBox.InputBindings>
 
-                                <CheckBox IsChecked="{Binding Selected}"
-                                          Margin="0,0,8,0"
-                                          VerticalAlignment="Center"/>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <!-- Genau EIN Root-Element: DockPanel -->
+                                <DockPanel Margin="0,4">
+                                    <!-- ✕-Button zum direkten Löschen dieses Items -->
+                                    <Button Content="✕"
+                                            DockPanel.Dock="Right"
+                                            Command="{Binding DataContext.RemoveQuestionItemCommand,
+                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Width="24" Height="24"
+                                            Margin="6,0,0,0"
+                                            ToolTip="Frage löschen"/>
 
-                                <TextBlock Text="{Binding Text}"
-                                           Foreground="White"
-                                           TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis"
-                                           VerticalAlignment="Center"/>
+                                    <CheckBox IsChecked="{Binding Selected}"
+                                              Margin="0,0,8,0"
+                                              VerticalAlignment="Center"
+                                              ToolTip="Ausgewählt = im nächsten Spiel dabei"/>
 
-                                <!-- Kontextmenü (optional) -->
-                                <DockPanel.ContextMenu>
-                                    <ContextMenu>
-                                        <MenuItem Header="Frage löschen"
-                                                  Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                  CommandParameter="{Binding}"/>
-                                    </ContextMenu>
-                                </DockPanel.ContextMenu>
-                            </DockPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                    <TextBlock Text="{Binding Text}"
+                                               Foreground="White"
+                                               TextWrapping="NoWrap"
+                                               TextTrimming="CharacterEllipsis"
+                                               VerticalAlignment="Center"/>
+
+                                    <!-- Kontextmenü (optional) -->
+                                    <DockPanel.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Frage löschen"
+                                                      Command="{Binding DataContext.RemoveQuestionItemCommand,
+                                                                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      CommandParameter="{Binding}"/>
+                                        </ContextMenu>
+                                    </DockPanel.ContextMenu>
+                                </DockPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
             </Border>
 
             <!-- rechte Spalte: Detailbereich (scrollbar) -->
