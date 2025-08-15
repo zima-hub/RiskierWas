@@ -16,32 +16,36 @@
         <!-- Toolbar -->
         <DockPanel Grid.Row="0" LastChildFill="False" Margin="12,12,12,0" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
+                <!-- NEU: Zurück-Button -->
+                <Button Content="← Zurück"
+                Command="{Binding BackCommand}"
+                Margin="0,0,16,0" Padding="10,6"/>
+
                 <Button Content="Neue Frage"
-                        Command="{Binding AddQuestionCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
+                Command="{Binding AddQuestionCommand}"
+                Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="Frage löschen"
-                        Command="{Binding RemoveQuestionCommand}"
-                        Margin="0,0,16,0" Padding="10,6"/>
+                Command="{Binding RemoveQuestionCommand}"
+                Margin="0,0,16,0" Padding="10,6"/>
 
                 <Button Content="Alle abwählen"
-                        Command="{Binding DeselectAllCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
+                Command="{Binding DeselectAllCommand}"
+                Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="20 zufällige Fragen"
-                        Command="{Binding SelectRandom20Command}"
-                        Margin="0,0,16,0" Padding="10,6"/>
+                Command="{Binding SelectRandom20Command}"
+                Margin="0,0,16,0" Padding="10,6"/>
 
                 <Button Content="Speichern"
-                        Command="{Binding SaveCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
+                Command="{Binding SaveCommand}"
+                Margin="0,0,8,0" Padding="10,6"/>
 
                 <Button Content="Speichern unter…"
-                        Command="{Binding SaveAsCommand}"
-                        Padding="10,6"/>
+                Command="{Binding SaveAsCommand}"
+                Padding="10,6"/>
             </StackPanel>
         </DockPanel>
-
         <!-- Inhalt: zwei Spalten -->
         <Grid Grid.Row="1" Margin="12,8,12,12">
             <Grid.ColumnDefinitions>
