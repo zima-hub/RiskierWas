@@ -89,7 +89,7 @@ namespace RiskierWas.ViewModels
             }
             else
             {
-                // falsche Antwort: Rundenpunkte verfallen, Zugwechsel
+                // falsche Antwort: Rundenpunkte verfallen, Zugwechsel (NextPoints bleibt erhalten!)
                 CurrentTeam.PendingScore = 0;
                 OnPropertyChanged(nameof(CurrentRoundPoints));
                 PassTurn();
@@ -130,8 +130,7 @@ namespace RiskierWas.ViewModels
             OnPropertyChanged(nameof(CurrentTeam));
             OnPropertyChanged(nameof(CurrentRoundPoints));
 
-            // Neue Runde: Einsatz zurücksetzen
-            NextPoints = 50;
+            // Hinweis: NextPoints NICHT zurücksetzen bei Zugwechsel; nur bei NextQuestion()
             OnPropertyChanged(nameof(InfoLine));
         }
 
@@ -147,7 +146,7 @@ namespace RiskierWas.ViewModels
             _questionIndex = (_questionIndex + 1) % selected.Count;
             CurrentQuestion = selected[_questionIndex];
 
-            // Neustart der Rundenwerte
+            // Neue Frage -> Einsatz zurücksetzen
             NextPoints = 50;
             CurrentTeam.PendingScore = 0;
             OnPropertyChanged(nameof(CurrentRoundPoints));
