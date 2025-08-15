@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
@@ -34,9 +34,10 @@ namespace RiskierWas.ViewModels
 
         public RelayCommand BackCommand { get; }
         public RelayCommand SaveCommand { get; }          // Speichern (fest)
-        public RelayCommand SaveAsCommand { get; }        // Speichern unter�
+        public RelayCommand SaveAsCommand { get; }        // Speichern unter…
         public RelayCommand AddQuestionCommand { get; }
-        public RelayCommand RemoveQuestionCommand { get; }
+        public RelayCommand RemoveQuestionCommand { get; }          // löscht SelectedQuestion
+        public RelayCommand RemoveQuestionItemCommand { get; }      // löscht per Parameter (Listeneintrag)
         public RelayCommand AddAnswerCommand { get; }
         public RelayCommand RemoveAnswerCommand { get; }
         public RelayCommand DeselectAllCommand { get; }
@@ -50,7 +51,9 @@ namespace RiskierWas.ViewModels
             SaveCommand = new RelayCommand(_ => SaveToDefault());
             SaveAsCommand = new RelayCommand(_ => SaveAs());
             AddQuestionCommand = new RelayCommand(_ => AddQuestion());
+
             RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => SelectedQuestion != null);
+            RemoveQuestionItemCommand = new RelayCommand(q => RemoveQuestion(q as Question), q => q is Question);
 
             AddAnswerCommand = new RelayCommand(_ => AddAnswer(),
                                         _ => SelectedQuestion != null && SelectedQuestion.Answers.Count < 16);
@@ -60,6 +63,7 @@ namespace RiskierWas.ViewModels
             DeselectAllCommand = new RelayCommand(_ => DeselectAll());
             SelectRandom20Command = new RelayCommand(_ => SelectRandom20());
 
+            // Nach der Command-Initialisierung auswählen
             SelectedQuestion = Questions.FirstOrDefault();
         }
 
@@ -84,7 +88,7 @@ namespace RiskierWas.ViewModels
             var sfd = new SaveFileDialog
             {
                 Filter = "JSON (*.json)|*.json",
-                Title = "Speichern unter�",
+                Title = "Speichern unter…",
                 FileName = "questions.json",
                 InitialDirectory = Path.GetDirectoryName(GetDefaultPath())
             };
@@ -115,16 +119,40 @@ namespace RiskierWas.ViewModels
         private void AddQuestion()
         {
             var q = new Question { Text = "Neue Frage", Selected = true };
+            // optional: gleich eine leere Antwort
+            // q.Answers.Add(new Answer { Text = "", Correct = false });
             Questions.Add(q);
             SelectedQuestion = q;
         }
 
-        private void RemoveQuestion()
+        // Löscht die aktuell ausgewählte Frage
+        private void RemoveQuestion() => RemoveQuestion(SelectedQuestion);
+
+        // Löscht eine konkrete Frage (für ✕-Button/ContextMenu)
+        private void RemoveQuestion(Question? q)
         {
-            if (SelectedQuestion == null) return;
-            var idx = Questions.IndexOf(SelectedQuestion);
-            Questions.Remove(SelectedQuestion);
-            SelectedQuestion = Questions.Count == 0 ? null : Questions[Math.Min(idx, Questions.Count - 1)];
+            if (q == null) return;
+
+            // Optional: Sicherheitsabfrage
+            var ask = MessageBox.Show(
+                "Diese Frage wirklich löschen?",
+                "Löschen bestätigen",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (ask != MessageBoxResult.Yes) return;
+
+            var idx = Questions.IndexOf(q);
+            Questions.Remove(q);
+
+            if (ReferenceEquals(q, SelectedQuestion))
+            {
+                SelectedQuestion = Questions.Count == 0
+                    ? null
+                    : Questions[Math.Min(idx, Math.Max(0, Questions.Count - 1))];
+            }
+
+            RemoveQuestionCommand.RaiseCanExecuteChanged();
         }
 
         private void AddAnswer()

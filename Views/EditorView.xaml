@@ -6,89 +6,145 @@
              mc:Ignorable="d">
 
     <Grid Background="#0D0D0D">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="380"/>
-            <!-- Fragenliste -->
-            <ColumnDefinition Width="16"/>
-            <ColumnDefinition Width="*"/>
-            <!-- Details -->
-        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Toolbar -->
+            <RowDefinition Height="*"/>
+            <!-- Inhalt -->
+        </Grid.RowDefinitions>
 
         <!-- Toolbar -->
-        <DockPanel Grid.ColumnSpan="3" LastChildFill="False" Margin="12,12,12,0" VerticalAlignment="Top">
+        <DockPanel Grid.Row="0" LastChildFill="False" Margin="12,12,12,0" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
-                <Button Content="Alle abwählen"
-            Command="{Binding DeselectAllCommand}"
-            Margin="0,0,8,0" Padding="10,6"/>
-                <Button Content="20 zufällige Fragen"
-            Command="{Binding SelectRandom20Command}"
-            Margin="0,0,8,0" Padding="10,6"/>
+                <Button Content="Neue Frage"
+                        Command="{Binding AddQuestionCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
 
-                <!-- Speichern & Speichern unter… -->
+                <Button Content="Frage löschen"
+                        Command="{Binding RemoveQuestionCommand}"
+                        Margin="0,0,16,0" Padding="10,6"/>
+
+                <Button Content="Alle abwählen"
+                        Command="{Binding DeselectAllCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
+
+                <Button Content="20 zufällige Fragen"
+                        Command="{Binding SelectRandom20Command}"
+                        Margin="0,0,16,0" Padding="10,6"/>
+
                 <Button Content="Speichern"
-            Command="{Binding SaveCommand}"
-            Margin="16,0,8,0" Padding="10,6"/>
+                        Command="{Binding SaveCommand}"
+                        Margin="0,0,8,0" Padding="10,6"/>
+
                 <Button Content="Speichern unter…"
-            Command="{Binding SaveAsCommand}"
-            Padding="10,6"/>
+                        Command="{Binding SaveAsCommand}"
+                        Padding="10,6"/>
             </StackPanel>
         </DockPanel>
 
-        <!-- Linke Spalte: Fragenliste (scrollbar) -->
-        <Border Grid.Column="0" Margin="12,56,0,12" Background="#0F172A" CornerRadius="12" Padding="8">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <ListBox ItemsSource="{Binding Questions}"
+        <!-- Inhalt: zwei Spalten -->
+        <Grid Grid.Row="1" Margin="12,8,12,12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="380"/>
+                <!-- Fragenliste -->
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="*"/>
+                <!-- Details -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Linke Spalte: Fragenliste (ListBox hat eigenen ScrollViewer – keinen zusätzlichen außenrum!) -->
+            <Border Grid.Column="0" Background="#0F172A" CornerRadius="12" Padding="8">
+                <ListBox x:Name="QuestionsList"
+                         ItemsSource="{Binding Questions}"
                          SelectedItem="{Binding SelectedQuestion}"
-                         Background="Transparent" BorderThickness="0"
+                         Background="Transparent"
+                         BorderThickness="0"
                          VirtualizingPanel.IsVirtualizing="True"
                          VirtualizingPanel.ScrollUnit="Pixel"
                          ScrollViewer.CanContentScroll="False">
+
+                    <!-- Entf-Taste löscht die aktuell ausgewählte Frage -->
+                    <ListBox.InputBindings>
+                        <KeyBinding Key="Delete" Command="{Binding RemoveQuestionCommand}"/>
+                    </ListBox.InputBindings>
+
                     <ListBox.ItemTemplate>
                         <DataTemplate>
+                            <!-- Genau EIN Root-Element: DockPanel -->
                             <DockPanel Margin="0,4">
-                                <CheckBox IsChecked="{Binding Selected}" Margin="0,0,8,0"/>
-                                <TextBlock Text="{Binding Text}" Foreground="White" TextWrapping="NoWrap"
-                                           TextTrimming="CharacterEllipsis" />
+                                <!-- ✕-Button zum direkten Löschen dieses Items -->
+                                <Button Content="✕"
+                                        DockPanel.Dock="Right"
+                                        Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Width="24" Height="24"
+                                        Margin="6,0,0,0"
+                                        ToolTip="Frage löschen"/>
+
+                                <CheckBox IsChecked="{Binding Selected}"
+                                          Margin="0,0,8,0"
+                                          VerticalAlignment="Center"/>
+
+                                <TextBlock Text="{Binding Text}"
+                                           Foreground="White"
+                                           TextWrapping="NoWrap"
+                                           TextTrimming="CharacterEllipsis"
+                                           VerticalAlignment="Center"/>
+
+                                <!-- Kontextmenü (optional) -->
+                                <DockPanel.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Frage löschen"
+                                                  Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                  CommandParameter="{Binding}"/>
+                                    </ContextMenu>
+                                </DockPanel.ContextMenu>
                             </DockPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-            </ScrollViewer>
-        </Border>
+            </Border>
 
-        <!-- rechte Spalte: Detailbereich (scrollbar) -->
-        <Border Grid.Column="2" Margin="0,56,12,12" Background="#0F172A" CornerRadius="12" Padding="12">
-            <ScrollViewer VerticalScrollBarVisibility="Auto">
-                <StackPanel>
-                    <TextBlock Text="Fragetext" Foreground="White" FontSize="18" Margin="0,0,0,6"/>
-                    <TextBox Text="{Binding SelectedQuestion.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                             AcceptsReturn="True" TextWrapping="Wrap"
-                             MinHeight="80" VerticalScrollBarVisibility="Auto"/>
+            <!-- rechte Spalte: Detailbereich (scrollbar) -->
+            <Border Grid.Column="2" Background="#0F172A" CornerRadius="12" Padding="12">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Fragetext" Foreground="White" FontSize="18" Margin="0,0,0,6"/>
+                        <TextBox Text="{Binding SelectedQuestion.Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                 MinHeight="80" VerticalScrollBarVisibility="Auto"/>
 
-                    <TextBlock Text="Antworten" Foreground="White" FontSize="18" Margin="0,16,0,6"/>
-                    <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <DockPanel Margin="0,6">
-                                    <Button Content="Entfernen"
-                                            Command="{Binding DataContext.RemoveAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}" DockPanel.Dock="Right" Margin="8,0,0,0"/>
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0,0,0">
-                                        <CheckBox IsChecked="{Binding Correct}" VerticalAlignment="Center" Content="richtig" Foreground="White"/>
-                                    </StackPanel>
-                                    <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                             MinWidth="300" Margin="0,0,8,0"/>
-                                </DockPanel>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
+                        <TextBlock Text="Antworten" Foreground="White" FontSize="18" Margin="0,16,0,6"/>
+                        <ItemsControl ItemsSource="{Binding SelectedQuestion.Answers}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <!-- EIN Root pro Antwortzeile -->
+                                    <DockPanel Margin="0,6">
+                                        <Button Content="Entfernen"
+                                                Command="{Binding DataContext.RemoveAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                DockPanel.Dock="Right"
+                                                Margin="8,0,0,0"/>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <Button Content="Antwort hinzufügen"
-                                Command="{Binding AddAnswerCommand}" Padding="10,6" />
+                                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0,0,0">
+                                            <CheckBox IsChecked="{Binding Correct}" VerticalAlignment="Center" Content="richtig" Foreground="White"/>
+                                        </StackPanel>
+
+                                        <TextBox Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                 MinWidth="300" Margin="0,0,8,0"/>
+                                    </DockPanel>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Button Content="Antwort hinzufügen"
+                                    Command="{Binding AddAnswerCommand}"
+                                    Padding="10,6"/>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </ScrollViewer>
-        </Border>
+                </ScrollViewer>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>
