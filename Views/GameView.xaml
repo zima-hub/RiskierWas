@@ -6,29 +6,25 @@
              xmlns:local="clr-namespace:RiskierWas"
              mc:Ignorable="d">
 
-    <Grid>
-        <!-- Converter nur hier registrieren (Keys passen zu den Bindings unten) -->
-        <Grid.Resources>
-            <local:ReferenceEqualsConverter x:Key="RefEq"/>
-            <local:CorrectToSymbolConverter x:Key="CorrectToSymbolConverter"/>
-            <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-            <local:CorrectToTextConverter x:Key="CorrectToTextConverter"/>
-            <local:CorrectToBrushConverter x:Key="CorrectToBrushConverter"/>
-            <local:ReferenceEqualsMultiConverter x:Key="RefEqMulti"/>
-        </Grid.Resources>
+    <!-- Converter LOKAL registrieren -->
+    <UserControl.Resources>
+        <local:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <local:CorrectToTextConverter x:Key="CorrectToTextConverter"/>
+        <local:CorrectToSymbolConverter x:Key="CorrectToSymbolConverter"/>
+        <local:CorrectToBrushConverter x:Key="CorrectToBrushConverter"/>
+        <!-- Falls du noch den ReferenceEqualsConverter brauchst:
+        <local:ReferenceEqualsConverter x:Key="ReferenceEqualsConverter"/> -->
+    </UserControl.Resources>
 
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <!-- Teamleiste -->
             <RowDefinition Height="Auto"/>
-            <!-- Frage -->
             <RowDefinition Height="*"/>
-            <!-- Antworten -->
             <RowDefinition Height="Auto"/>
-            <!-- Footer -->
         </Grid.RowDefinitions>
 
-        <!-- Teams und Punkte -->
+        <!-- Teams und Kopfzeile -->
         <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
             <ItemsControl ItemsSource="{Binding Teams}">
                 <ItemsControl.ItemsPanel>
@@ -36,40 +32,10 @@
                         <StackPanel Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border CornerRadius="12" Padding="12" Margin="8">
-                            <Border.Style>
-                                <Style TargetType="Border">
-                                    <Setter Property="Background" Value="#111111"/>
-                                    <Setter Property="BorderBrush" Value="#444"/>
-                                    <Setter Property="BorderThickness" Value="1"/>
-
-                                    <Style.Triggers>
-                                        <!-- Ist dieses Item == CurrentTeam ? Dann gold markieren -->
-                                        <DataTrigger Value="True">
-                                            <DataTrigger.Binding>
-                                                <MultiBinding Converter="{StaticResource RefEqMulti}">
-                                                    <Binding/>
-                                                    <!-- dieses Team-Item -->
-                                                    <Binding Path="DataContext.CurrentTeam" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
-                                                </MultiBinding>
-                                            </DataTrigger.Binding>
-
-                                            <Setter Property="BorderBrush" Value="#FFD700"/>
-                                            <Setter Property="BorderThickness" Value="3"/>
-                                            <Setter Property="Background" Value="#1a1a1a"/>
-                                            <Setter Property="Effect">
-                                                <Setter.Value>
-                                                    <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#FFD700" Opacity="0.7"/>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
-
+                        <Border CornerRadius="12" Padding="12" Margin="8"
+                                Background="#111111" BorderBrush="#444" BorderThickness="1">
                             <StackPanel>
                                 <TextBlock Text="{Binding Name}" Foreground="White" FontWeight="Bold"/>
                                 <TextBlock Text="{Binding Score}" Foreground="White" FontSize="24"/>
@@ -79,21 +45,32 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
 
-            <!-- Nächster Antwortwert -->
+            <!-- Kachel: Nächste richtige Antwort -->
             <Border CornerRadius="12" Padding="12" Margin="8,0,0,0" Background="#1F2937">
                 <StackPanel>
                     <TextBlock Text="Nächste richtige Antwort:" Foreground="White"/>
                     <TextBlock Text="{Binding NextPoints}" Foreground="LightGreen" FontSize="24"/>
                 </StackPanel>
             </Border>
-            <!-- Aktuelle Rundenpunkte -->
             <Border CornerRadius="12" Padding="12" Margin="8,0,0,0" Background="#1F2937">
                 <StackPanel>
                     <TextBlock Text="Punkte aktuelle Runde:" Foreground="White"/>
-                    <TextBlock Text="{Binding CurrentTeam.PendingScore}" Foreground="LightBlue" FontSize="24"/>
+                    <TextBlock Text="{Binding CurrentRoundPoints}" Foreground="White" FontSize="24"/>
                 </StackPanel>
             </Border>
-
+            <!-- Kachel: verbleibende ✔ / ✖ -->
+            <Border CornerRadius="12" Padding="12" Margin="8,0,0,0" Background="#1F2937">
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,12,0">
+                        <TextBlock Text="✔" Foreground="LightGreen" FontSize="22" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding RemainingCorrectCount}" Foreground="LightGreen" FontSize="22"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="✖" Foreground="Tomato" FontSize="22" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding RemainingWrongCount}" Foreground="Tomato" FontSize="22"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
         </StackPanel>
 
         <!-- Frage -->
@@ -109,43 +86,35 @@
                         <UniformGrid Columns="4" Rows="4"/>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
-
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Border Margin="6" CornerRadius="12">
                             <Button Padding="12"
-        Command="{Binding DataContext.RevealAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-        CommandParameter="{Binding}">
+                                    Command="{Binding DataContext.RevealAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                    CommandParameter="{Binding}">
                                 <Button.Style>
                                     <Style TargetType="Button">
                                         <Setter Property="Background" Value="#1F1F1F"/>
                                         <Setter Property="Foreground" Value="White"/>
                                         <Setter Property="BorderBrush" Value="#444"/>
                                         <Setter Property="BorderThickness" Value="1"/>
-
                                         <Style.Triggers>
-                                            <!-- Bereits aufgedeckt -> deaktivieren -->
                                             <DataTrigger Binding="{Binding Revealed}" Value="True">
-                                                <!-- Button nicht deaktivieren, sondern Klicks ignorieren -->
-                                                <Setter Property="IsHitTestVisible" Value="False"/>
+                                                <Setter Property="Foreground" Value="White"/>
                                                 <Setter Property="BorderBrush" Value="Transparent"/>
                                             </DataTrigger>
-
-                                            <!-- Richtig -->
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Revealed}" Value="True"/>
-                                                    <Condition Binding="{Binding Correct}"  Value="True"/>
+                                                    <Condition Binding="{Binding Correct}" Value="True"/>
                                                 </MultiDataTrigger.Conditions>
                                                 <Setter Property="Background" Value="LimeGreen"/>
                                                 <Setter Property="Foreground" Value="Black"/>
                                             </MultiDataTrigger>
-
-                                            <!-- Falsch -->
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Revealed}" Value="True"/>
-                                                    <Condition Binding="{Binding Correct}"  Value="False"/>
+                                                    <Condition Binding="{Binding Correct}" Value="False"/>
                                                 </MultiDataTrigger.Conditions>
                                                 <Setter Property="Background" Value="#CC0000"/>
                                                 <Setter Property="Foreground" Value="White"/>
@@ -153,34 +122,27 @@
                                         </Style.Triggers>
                                     </Style>
                                 </Button.Style>
-
-                                <!-- WICHTIG: Ein Button darf nur EIN Kind haben -> Inhalt kapseln -->
-                                <Button.Content>
-                                    <StackPanel>
-                                        <TextBlock Text="{Binding Text}" FontSize="18" TextWrapping="Wrap" TextAlignment="Center"/>
-
-                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
-                  Visibility="{Binding Revealed, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                            <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToSymbolConverter}}"
-                   FontSize="28" Margin="0,4,8,0"/>
-                                            <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToTextConverter}}"
-                   FontSize="16"/>
-                                        </StackPanel>
-
-                                        <TextBlock Text="{Binding Comment}" FontSize="12" Foreground="White"
-                 TextWrapping="Wrap" TextAlignment="Center"
-                 Visibility="{Binding Revealed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding Text}" FontSize="18" TextWrapping="Wrap" TextAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                                Visibility="{Binding Revealed, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToSymbolConverter}}"
+                                                   FontSize="28" Margin="0,4,8,0"/>
+                                        <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToTextConverter}}"
+                                                   FontSize="16"/>
                                     </StackPanel>
-                                </Button.Content>
+                                    <TextBlock Text="{Binding Comment}" FontSize="12" Foreground="White"
+                                               TextWrapping="Wrap" TextAlignment="Center"
+                                               Visibility="{Binding Revealed, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                                </StackPanel>
                             </Button>
-
                         </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Border>
 
-        <!-- Footer / Steuerung -->
+        <!-- Footer / Controls -->
         <DockPanel Grid.Row="3" Panel.ZIndex="10" Margin="0,12,0,0">
             <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding InfoLine}" Margin="0,0,16,2"/>
@@ -189,11 +151,10 @@
                     <Run Text="{Binding CurrentTeam.PendingScore}"/>
                 </TextBlock>
             </StackPanel>
-
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                <Button Content="Weitergeben"    Command="{Binding PassTurnCommand}"   Margin="6,0"/>
-                <Button Content="Nächste Frage"  Command="{Binding NextQuestionCommand}" Margin="6,0"/>
-                <Button Content="Zurück"         Command="{Binding BackToStartCommand}" Margin="6,0"/>
+                <Button Content="Weitergeben" Command="{Binding PassTurnCommand}" Margin="6,0"/>
+                <Button Content="Nächste Frage" Command="{Binding NextQuestionCommand}" Margin="6,0"/>
+                <Button Content="Zurück" Command="{Binding BackToStartCommand}" Margin="6,0"/>
             </StackPanel>
         </DockPanel>
     </Grid>
