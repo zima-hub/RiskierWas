@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Microsoft.Win32;
 using RiskierWas.Models;
 using RiskierWas.Services;
 
@@ -32,7 +33,8 @@ namespace RiskierWas.ViewModels
         }
 
         public RelayCommand BackCommand { get; }
-        public RelayCommand SaveCommand { get; }              // <- NEU (statt ExportJsonCommand)
+        public RelayCommand SaveCommand { get; }          // Speichern (fest)
+        public RelayCommand SaveAsCommand { get; }        // Speichern unter…
         public RelayCommand AddQuestionCommand { get; }
         public RelayCommand RemoveQuestionCommand { get; }
         public RelayCommand AddAnswerCommand { get; }
@@ -45,7 +47,8 @@ namespace RiskierWas.ViewModels
             _main = main;
 
             BackCommand = new RelayCommand(_ => _main.NavigateToStart());
-            SaveCommand = new RelayCommand(_ => SaveToDefault());    // <- hier speichern
+            SaveCommand = new RelayCommand(_ => SaveToDefault());
+            SaveAsCommand = new RelayCommand(_ => SaveAs());
             AddQuestionCommand = new RelayCommand(_ => AddQuestion());
             RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => SelectedQuestion != null);
 
@@ -60,24 +63,54 @@ namespace RiskierWas.ViewModels
             SelectedQuestion = Questions.FirstOrDefault();
         }
 
-        // Speichert nach <App>\Data\questions.json
+        // ---------- Speichern ----------
+
+        private string GetDefaultPath()
+        {
+            var baseDir = AppContext.BaseDirectory;
+            var dataDir = Path.Combine(baseDir, "Data");
+            Directory.CreateDirectory(dataDir);
+            return Path.Combine(dataDir, "questions.json");
+        }
+
         private void SaveToDefault()
+        {
+            var path = GetDefaultPath();
+            SaveTo(path, showOkInfo: true);
+        }
+
+        private void SaveAs()
+        {
+            var sfd = new SaveFileDialog
+            {
+                Filter = "JSON (*.json)|*.json",
+                Title = "Speichern unter…",
+                FileName = "questions.json",
+                InitialDirectory = Path.GetDirectoryName(GetDefaultPath())
+            };
+            if (sfd.ShowDialog() == true)
+            {
+                SaveTo(sfd.FileName, showOkInfo: true);
+            }
+        }
+
+        private void SaveTo(string path, bool showOkInfo)
         {
             try
             {
-                var baseDir = AppContext.BaseDirectory; // Ordner der exe
-                var dataDir = Path.Combine(baseDir, "Data");
-                Directory.CreateDirectory(dataDir);
-                var path = Path.Combine(dataDir, "questions.json");
-
+                var dir = Path.GetDirectoryName(path)!;
+                Directory.CreateDirectory(dir);
                 QuestionService.SaveToJson(path, Questions);
-                MessageBox.Show($"Gespeichert: {path}", "Speichern", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (showOkInfo)
+                    MessageBox.Show($"Gespeichert: {path}", "Speichern", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Fehler beim Speichern: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        // ---------- Fragen & Antworten ----------
 
         private void AddQuestion()
         {
@@ -109,6 +142,8 @@ namespace RiskierWas.ViewModels
             AddAnswerCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(SelectedQuestion));
         }
+
+        // ---------- Auswahl-Tools ----------
 
         private void DeselectAll()
         {
