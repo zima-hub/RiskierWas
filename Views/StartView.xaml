@@ -113,7 +113,7 @@
                         Command="{Binding OpenEditorCommand}"
                         Padding="12,8" Width="220" Margin="0,8,0,0"/>
 
-                <TextBlock Text="(Standard: Data/questions.json neben der EXE)"
+                <TextBlock Text="(Standard: questions.json neben der EXE)"
                            Foreground="Gray" Margin="0,8,0,0"/>
 
                 <!-- Anleitung zum Editor -->
@@ -128,7 +128,7 @@
                         <TextBlock Foreground="White" TextWrapping="Wrap" Margin="0,0,0,4"
                                    Text="„Neue Frage“ / „Frage löschen“: Fragenbestand anpassen; Antworten rechts bearbeiten (max. 16)."/>
                         <TextBlock Foreground="White" TextWrapping="Wrap"
-                                   Text="„Speichern“ schreibt nach Data/questions.json; „Speichern unter…“ exportiert die aktuelle Liste."/>
+                                   Text="„Speichern“ schreibt nach questions.json; „Speichern unter…“ exportiert die aktuelle Liste."/>
                     </StackPanel>
                 </Border>
             </StackPanel>

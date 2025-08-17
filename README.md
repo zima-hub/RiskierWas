@@ -7,14 +7,14 @@
 
 ## Starten
 - Drücken Sie F5 oder `dotnet run` im Ordner `RiskierWas`.
-- Die App lädt automatisch `Data/questions.json` neben der EXE, wenn vorhanden.
+- Die App lädt automatisch `questions.json` neben der EXE, wenn vorhanden.
 - Alternativ können Sie über den Startbildschirm eine JSON-Datei laden.
 
 ## Veröffentlichen (eine EXE)
 ```
 dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true
 ```
-Kopieren Sie den Veröffentlichungsordner und die Datei `Data/questions.json` zusammen.
+Kopieren Sie den Veröffentlichungsordner und die Datei `questions.json` zusammen.
 
 ## Format der Fragen (JSON)
 ```json
