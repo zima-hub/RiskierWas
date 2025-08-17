@@ -37,7 +37,7 @@ namespace RiskierWas.ViewModels
             try
             {
                 var exeDir = AppContext.BaseDirectory;
-                var defaultPath = Path.Combine(exeDir, "questions.json");
+                var defaultPath = Path.Combine(exeDir, "Data", "questions.json");
                 if (File.Exists(defaultPath))
                 {
                     Questions = QuestionService.LoadFromJson(defaultPath);

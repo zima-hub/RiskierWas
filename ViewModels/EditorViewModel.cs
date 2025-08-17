@@ -72,8 +72,9 @@ namespace RiskierWas.ViewModels
         private string GetDefaultPath()
         {
             var baseDir = AppContext.BaseDirectory;
-            Directory.CreateDirectory(baseDir);
-            return Path.Combine(baseDir, "questions.json");
+            var dataDir = Path.Combine(baseDir, "Data");
+            Directory.CreateDirectory(dataDir);
+            return Path.Combine(dataDir, "questions.json");
         }
 
         private void SaveToDefault()
