@@ -13,7 +13,8 @@
         <local:CorrectToSymbolConverter x:Key="CorrectToSymbolConverter"/>
         <local:CorrectToBrushConverter x:Key="CorrectToBrushConverter"/>
 
-        <local:ReferenceEqualsConverter x:Key="ReferenceEqualsConverter"/>
+        <!-- Zum Vergleichen der Team-Instanzen wird ein MultiValueConverter benötigt -->
+        <local:ReferenceEqualsMultiConverter x:Key="ReferenceEqualsMultiConverter"/>
     </UserControl.Resources>
 
     <Grid>
@@ -46,9 +47,11 @@
                                         <!-- Ist dieses Item == CurrentTeam ? Dann gold markieren -->
                                         <DataTrigger Value="True">
                                             <DataTrigger.Binding>
-                                                <MultiBinding Converter="{StaticResource ReferenceEqualsConverter}">
+                                                <!-- Vergleich: Ist das aktuelle Item das aktive Team? -->
+                                                <MultiBinding Converter="{StaticResource ReferenceEqualsMultiConverter}">
+                                                    <!-- Dieses Team-Item -->
                                                     <Binding/>
-                                                    <!-- dieses Team-Item -->
+                                                    <!-- Aktuelles Team aus dem ViewModel -->
                                                     <Binding Path="DataContext.CurrentTeam" RelativeSource="{RelativeSource AncestorType=UserControl}"/>
                                                 </MultiBinding>
                                             </DataTrigger.Binding>
