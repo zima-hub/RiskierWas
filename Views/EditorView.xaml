@@ -20,21 +20,19 @@
                         Command="{Binding BackCommand}"
                         Margin="0,0,16,0" Padding="10,6"/>
 
-                <Button Content="Neue Frage"
-                        Command="{Binding AddQuestionCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
-
-                <Button Content="Frage löschen"
-                        Command="{Binding RemoveQuestionCommand}"
-                        Margin="0,0,16,0" Padding="10,6"/>
-
-                <Button Content="Alle abwählen"
+                                <Button Content="Alle abwählen"
                         Command="{Binding DeselectAllCommand}"
                         Margin="0,0,8,0" Padding="10,6"/>
 
-                <Button Content="20 zufällige Fragen"
+                <Button Content="20 zufällige Fragen wählen"
                         Command="{Binding SelectRandom20Command}"
-                        Margin="0,0,16,0" Padding="10,6"/>
+                        Margin="0,0,16,0" Padding="10,6" Click="Button_Click"/>
+
+                <Button Content="Neue Frage erstellen"
+        Command="{Binding AddQuestionCommand}"
+        Margin="0,0,8,0" Padding="10,6"/>
+
+
 
                 <Button Content="Speichern"
                         Command="{Binding SaveCommand}"
