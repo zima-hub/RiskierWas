@@ -12,6 +12,7 @@ namespace RiskierWas.ViewModels
         private readonly MainViewModel _main;
         private int _questionIndex = -1;
         private int _nextPoints = 50;
+        private readonly Random _rng = new();
 
         private Question? _currentQuestion;
         public Question? CurrentQuestion
@@ -145,6 +146,12 @@ namespace RiskierWas.ViewModels
 
             _questionIndex = (_questionIndex + 1) % selected.Count;
             CurrentQuestion = selected[_questionIndex];
+
+            if (CurrentQuestion != null)
+            {
+                var shuffled = CurrentQuestion.Answers.OrderBy(_ => _rng.Next()).ToList();
+                CurrentQuestion.Answers = new ObservableCollection<Answer>(shuffled);
+            }
 
             // Neue Frage -> Einsatz zurücksetzen
             NextPoints = 50;
