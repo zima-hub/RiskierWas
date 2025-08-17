@@ -161,7 +161,7 @@
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
                                                 Visibility="{Binding Revealed, Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToSymbolConverter}}"
-                                                   FontSize="28" Margin="0,4,8,0"/>
+                                                   FontSize="16" Margin="0,0,8,0" VerticalAlignment="Center"/>
                                         <TextBlock Text="{Binding Correct, Converter={StaticResource CorrectToTextConverter}}"
                                                    FontSize="16"/>
                                     </StackPanel>
