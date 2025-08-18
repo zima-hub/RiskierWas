@@ -18,31 +18,33 @@
             <StackPanel Orientation="Horizontal">
                 <Button Content="← Zurück"
                         Command="{Binding BackCommand}"
-                        Margin="0,0,16,0" Padding="10,6"/>
+                        Margin="0,0,16,0" Padding="10,6"
+                        ToolTip="Zur Startansicht zurückkehren"/>
 
-                                <Button Content="Alle abwählen"
+                <Button Content="Alle abwählen"
                         Command="{Binding DeselectAllCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
+                        Margin="0,0,8,0" Padding="10,6"
+                        ToolTip="Markierung aller Fragen entfernen"/>
 
                 <Button Content="20 zufällige Fragen wählen"
                         Command="{Binding SelectRandom20Command}"
-                        Margin="0,0,16,0" Padding="10,6" Click="Button_Click"/>
+                        Margin="0,0,16,0" Padding="10,6" Click="Button_Click"
+                        ToolTip="Zufällig 20 Fragen markieren"/>
 
-                
-
-
+                <Button Content="Neue Frage erstellen"
+                        Command="{Binding AddQuestionCommand}"
+                        Margin="0,0,8,0" Padding="10,6"
+                        ToolTip="Eine neue Frage zur Liste hinzufügen"/>
 
                 <Button Content="Speichern"
                         Command="{Binding SaveCommand}"
-                        Margin="0,0,8,0" Padding="10,6"/>
+                        Margin="0,0,8,0" Padding="10,6"
+                        ToolTip="Aktuelle Fragenliste speichern"/>
 
                 <Button Content="Speichern unter…"
                         Command="{Binding SaveAsCommand}"
-                        Margin="0,0,16,0" Padding="10,6"/>
-
-                <Button Content="Neue Frage erstellen"
-Command="{Binding AddQuestionCommand}"
-Margin="0,0,8,0" Padding="10,6"/>
+                        Padding="10,6"
+                        ToolTip="Fragenliste in einer neuen Datei speichern"/>
             </StackPanel>
         </DockPanel>
 
