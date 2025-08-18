@@ -312,13 +312,13 @@
       {
         "Text": "Azoren",
         "Correct": true,
-        "Comment": "zu Portugal:\n9 Inseln im Atlantik",
+        "Comment": "zu Portugal: 9 Inseln im Atlantik",
         "Revealed": false
       },
       {
         "Text": "Balearen",
         "Correct": true,
-        "Comment": "zu Spanien:\n4 Inseln im Mittelmeer",
+        "Comment": "zu Spanien: 4 Inseln im Mittelmeer",
         "Revealed": false
       },
       {
@@ -330,73 +330,73 @@
       {
         "Text": "Hebriden",
         "Correct": true,
-        "Comment": "zu Schottland:\nca. 500 Inseln im Atlantik",
+        "Comment": "zu Schottland: ca. 500 Inseln im Atlantik",
         "Revealed": false
       },
       {
         "Text": "Karawanken",
         "Correct": false,
-        "Comment": "Gebirge bis 2238m\n(\u00D6sterreich/Kroatien)",
+        "Comment": "Gebirge bis 2238m (\u00D6sterreich/Kroatien)",
         "Revealed": false
       },
       {
         "Text": "Komoren",
         "Correct": true,
-        "Comment": "eigene Republik\nim indischen Ozean",
+        "Comment": "eigene Republik im indischen Ozean",
         "Revealed": false
       },
       {
         "Text": "Kordilleren",
         "Correct": false,
-        "Comment": "Gebirge in Amerika\n(=Anden)",
+        "Comment": "Gebirge in Amerika (=Anden)",
         "Revealed": false
       },
       {
         "Text": "Kurilen",
         "Correct": true,
-        "Comment": "zu Ru\u00DFland:\nNW von Japan im Pazifik",
+        "Comment": "zu Ru\u00DFland: NW von Japan im Pazifik",
         "Revealed": false
       },
       {
         "Text": "Kykladen",
         "Correct": true,
-        "Comment": "zu Griechenland:\nca. 200 Inseln im Mittelmeer",
+        "Comment": "zu Griechenland: ca. 200 Inseln im Mittelmeer",
         "Revealed": false
       },
       {
         "Text": "Lakkadiven",
         "Correct": true,
-        "Comment": "indische Koralleninseln\nim indischen Ozean",
+        "Comment": "indische Koralleninseln im indischen Ozean",
         "Revealed": false
       },
       {
         "Text": "Lofoten",
         "Correct": true,
-        "Comment": "zu Norwegen: n\u00F6rdlich des\nPolarkreises im Atlantik",
+        "Comment": "zu Norwegen: n\u00F6rdlich des Polarkreises im Atlantik",
         "Revealed": false
       },
       {
         "Text": "Malediven",
         "Correct": true,
-        "Comment": "eigene Republik SW\nvon Ceylon im ind. Ozean",
+        "Comment": "eigene Republik SW von Ceylon im ind. Ozean",
         "Revealed": false
       },
       {
         "Text": "Molukken",
         "Correct": true,
-        "Comment": "zu Indonesien westlich von\nNeuguinea im Pazifik",
+        "Comment": "zu Indonesien westlich von Neuguinea im Pazifik",
         "Revealed": false
       },
       {
         "Text": "Seychellen",
         "Correct": true,
-        "Comment": "eigene Republik n\u00F6rdlich von\nMadagaskar im ind. Ozean",
+        "Comment": "eigene Republik n\u00F6rdlich von Madagaskar im ind. Ozean",
         "Revealed": false
       },
       {
         "Text": "Sporaden",
         "Correct": true,
-        "Comment": "zu Griechenland: Inseln in\nder \u00C4g\u00E4is (Mittelmeer)",
+        "Comment": "zu Griechenland: Inseln in der \u00C4g\u00E4is (Mittelmeer)",
         "Revealed": false
       },
       {
