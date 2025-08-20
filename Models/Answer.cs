@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace RiskierWas.Models
 {
@@ -12,6 +13,7 @@ namespace RiskierWas.Models
         public string Text { get => _text; set { _text = value; OnPropertyChanged(nameof(Text)); } }
         public bool Correct { get => _correct; set { _correct = value; OnPropertyChanged(nameof(Correct)); } }
         public string? Comment { get => _comment; set { _comment = value; OnPropertyChanged(nameof(Comment)); } }
+        [JsonIgnore]
         public bool Revealed { get => _revealed; set { _revealed = value; OnPropertyChanged(nameof(Revealed)); } }
 
         public event PropertyChangedEventHandler? PropertyChanged;
