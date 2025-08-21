@@ -138,10 +138,10 @@
 
         <!-- Fußzeile: Hinweis zur Urheberschaft -->
         <TextBlock Grid.Row="2"
-                   Text="nach einer tollen Excel-Makro-Vorlage von Thommy Volz programmiert von Matthias Zimmer + ChatGPT"
+                   Text="nach einer tollen Excel-Makro-Vorlage von Thommes Volz programmiert von Matthias Zimmer + ChatGPT"
                    Foreground="Gray"
                    HorizontalAlignment="Center"
-                   Margin="0,8,0,8"
-                   FontSize="12"/>
+                   Margin="0,8,0,0"
+                   FontSize="12" Height="16" VerticalAlignment="Top"/>
     </Grid>
 </UserControl>
