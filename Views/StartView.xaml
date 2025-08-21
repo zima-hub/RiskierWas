@@ -12,6 +12,8 @@
             <!-- Header -->
             <RowDefinition Height="*"/>
             <!-- Inhalt -->
+            <RowDefinition Height="Auto"/>
+            <!-- Fußzeile -->
         </Grid.RowDefinitions>
 
         <!-- HEADER: Logo + Erklärung -->
@@ -133,5 +135,13 @@
                 </Border>
             </StackPanel>
         </Grid>
+
+        <!-- Fußzeile: Hinweis zur Urheberschaft -->
+        <TextBlock Grid.Row="2"
+                   Text="nach einer tollen Excel-Makro-Vorlage von Thommy Volz programmiert von Matthias Zimmer + ChatGPT"
+                   Foreground="Gray"
+                   HorizontalAlignment="Center"
+                   Margin="0,8,0,8"
+                   FontSize="12"/>
     </Grid>
 </UserControl>
