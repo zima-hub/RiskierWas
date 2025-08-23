@@ -16,6 +16,9 @@ namespace RiskierWas.ViewModels
         private readonly Random _rng = new();
         private int _baseNextPoints = 50;
         private readonly DispatcherTimer _decayTimer = new() { Interval = TimeSpan.FromSeconds(10) };
+        private readonly DispatcherTimer _decayProgressTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
+        private DateTime _decayStartTime;
+        private double _decayProgress;
         private bool _decayPaused;
 
         private Question? _currentQuestion;
@@ -70,6 +73,19 @@ namespace RiskierWas.ViewModels
 
         public bool EnablePointDecay => _main.EnablePointDecay;
 
+        public double DecayProgress
+        {
+            get => _decayProgress;
+            private set
+            {
+                if (Math.Abs(_decayProgress - value) > 0.0001)
+                {
+                    _decayProgress = value;
+                    OnPropertyChanged(nameof(DecayProgress));
+                }
+            }
+        }
+
         public bool DecayPaused
         {
             get => _decayPaused;
@@ -91,7 +107,17 @@ namespace RiskierWas.ViewModels
             _main = main;
             SubscribeTeamEvents();
 
-            _decayTimer.Tick += (_, _) => { NextPoints = Math.Max(1, (int)Math.Ceiling(NextPoints * 0.9)); };
+            _decayTimer.Tick += (_, _) =>
+            {
+                NextPoints = Math.Max(1, (int)Math.Ceiling(NextPoints * 0.9));
+                _decayStartTime = DateTime.Now;
+                DecayProgress = 0;
+            };
+            _decayProgressTimer.Tick += (_, _) =>
+            {
+                var elapsed = DateTime.Now - _decayStartTime;
+                DecayProgress = Math.Min(1.0, elapsed.TotalMilliseconds / _decayTimer.Interval.TotalMilliseconds);
+            };
 
             RevealAnswerCommand = new RelayCommand(RevealAnswer, _ => CurrentQuestion != null);
             NextQuestionCommand = new RelayCommand(_ => NextQuestion());
@@ -106,12 +132,21 @@ namespace RiskierWas.ViewModels
         {
             if (_main.EnablePointDecay && !DecayPaused)
             {
+                _decayStartTime = DateTime.Now;
+                DecayProgress = 0;
                 _decayTimer.Stop();
+                _decayProgressTimer.Stop();
                 _decayTimer.Start();
+                _decayProgressTimer.Start();
             }
         }
 
-        private void StopDecayTimer() => _decayTimer.Stop();
+        private void StopDecayTimer()
+        {
+            _decayTimer.Stop();
+            _decayProgressTimer.Stop();
+            DecayProgress = 0;
+        }
 
         private void ToggleDecayPause()
         {
