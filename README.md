@@ -31,7 +31,8 @@ Kopieren Sie den Veröffentlichungsordner und die Datei `Data/questions.json` zu
 
 ## Hinweise
 - Punkte: +50 pro richtiger Antwort, Falsch -> nächstes Team.
+- Option: Punkteverfall (-10% alle 10s) auf dem Startbildschirm aktivierbar.
 - Automatisches Aufdecken: sobald alle richtigen **oder** alle falschen Antworten aufgedeckt sind.
 - Editor: Fragen links auswählen, Text und Antworten rechts bearbeiten; Export über „JSON exportieren…“.
 - Nach einer tollen Excel-Makro-Vorlage von Thommes Volz mit superkreativen Fragen
-- Programmiert von Matthias Zimmer mit massiver Hilfe von ChatGPT. 
+- Programmiert von Matthias Zimmer mit massiver Hilfe von ChatGPT.

@@ -20,6 +20,13 @@ namespace RiskierWas.ViewModels
             new Team{ Name = "Team 4"},
         };
 
+        private bool _enablePointDecay;
+        public bool EnablePointDecay
+        {
+            get => _enablePointDecay;
+            set { if (_enablePointDecay != value) { _enablePointDecay = value; OnPropertyChanged(nameof(EnablePointDecay)); } }
+        }
+
         public RelayCommand StartGameCommand { get; }
         public RelayCommand OpenEditorCommand { get; }
         public RelayCommand LoadQuestionsCommand { get; }
@@ -39,6 +46,8 @@ namespace RiskierWas.ViewModels
         {
             // Teams passend zur Auswahl neu aufbauen
             RebuildTeams();
+
+            _main.EnablePointDecay = EnablePointDecay;
 
             // los geht's
             _main.NavigateToGame();
