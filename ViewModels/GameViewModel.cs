@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Collections.Specialized;
+using System.Windows.Threading;
 
 namespace RiskierWas.ViewModels
 {
@@ -13,6 +14,8 @@ namespace RiskierWas.ViewModels
         private int _questionIndex = -1;
         private int _nextPoints = 50;
         private readonly Random _rng = new();
+        private int _baseNextPoints = 50;
+        private readonly DispatcherTimer _decayTimer = new() { Interval = TimeSpan.FromSeconds(10) };
 
         private Question? _currentQuestion;
         public Question? CurrentQuestion
@@ -68,31 +71,48 @@ namespace RiskierWas.ViewModels
             _main = main;
             SubscribeTeamEvents();
 
+            _decayTimer.Tick += (_, _) => { NextPoints = Math.Max(1, (int)Math.Ceiling(NextPoints * 0.9)); };
+
             RevealAnswerCommand = new RelayCommand(RevealAnswer, _ => CurrentQuestion != null);
             NextQuestionCommand = new RelayCommand(_ => NextQuestion());
             PassTurnCommand = new RelayCommand(_ => PassTurn(), _ => CurrentQuestion != null);
-            BackToStartCommand = new RelayCommand(_ => _main.NavigateToStart());
+            BackToStartCommand = new RelayCommand(_ => BackToStart());
 
             NextQuestion();
         }
+
+        private void StartDecayTimer()
+        {
+            if (_main.EnablePointDecay)
+            {
+                _decayTimer.Stop();
+                _decayTimer.Start();
+            }
+        }
+
+        private void StopDecayTimer() => _decayTimer.Stop();
 
         private void RevealAnswer(object? param)
         {
             if (CurrentQuestion == null) return;
             if (param is not Answer answer || answer.Revealed) return;
 
+            StopDecayTimer();
+
             answer.Revealed = true;
             if (answer.Correct)
             {
                 CurrentTeam.PendingScore += NextPoints;
                 OnPropertyChanged(nameof(CurrentRoundPoints));
-                NextPoints += 50;
+                _baseNextPoints += 50;
+                NextPoints = _baseNextPoints;
             }
             else
             {
                 // falsche Antwort: Rundenpunkte verfallen, Zugwechsel (NextPoints bleibt erhalten!)
                 CurrentTeam.PendingScore = 0;
                 OnPropertyChanged(nameof(CurrentRoundPoints));
+                NextPoints = _baseNextPoints;
                 PassTurn();
             }
 
@@ -100,6 +120,7 @@ namespace RiskierWas.ViewModels
             OnPropertyChanged(nameof(RemainingCorrectCount));
             OnPropertyChanged(nameof(RemainingWrongCount));
             AutoRevealIfDone();
+            StartDecayTimer();
         }
 
         private void AutoRevealIfDone()
@@ -118,6 +139,8 @@ namespace RiskierWas.ViewModels
         {
             if (CurrentQuestion == null) return;
 
+            StopDecayTimer();
+
             // Punkte „banking“
             if (CurrentTeam.PendingScore > 0)
             {
@@ -131,12 +154,23 @@ namespace RiskierWas.ViewModels
             OnPropertyChanged(nameof(CurrentTeam));
             OnPropertyChanged(nameof(CurrentRoundPoints));
 
+            NextPoints = _baseNextPoints;
+
             // Hinweis: NextPoints NICHT zurücksetzen bei Zugwechsel; nur bei NextQuestion()
             OnPropertyChanged(nameof(InfoLine));
+            StartDecayTimer();
+        }
+
+        private void BackToStart()
+        {
+            StopDecayTimer();
+            _main.NavigateToStart();
         }
 
         private void NextQuestion()
         {
+            StopDecayTimer();
+
             var selected = _main.Questions.Where(q => q.Selected).ToList();
             if (selected.Count == 0)
             {
@@ -154,10 +188,12 @@ namespace RiskierWas.ViewModels
             }
 
             // Neue Frage -> Einsatz zurücksetzen
-            NextPoints = 50;
+            _baseNextPoints = 50;
+            NextPoints = _baseNextPoints;
             CurrentTeam.PendingScore = 0;
             OnPropertyChanged(nameof(CurrentRoundPoints));
             OnPropertyChanged(nameof(InfoLine));
+            StartDecayTimer();
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

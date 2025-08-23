@@ -21,6 +21,7 @@ namespace RiskierWas.ViewModels
         public ObservableCollection<Team> Teams { get; set; } = new();
         public int CurrentTeamIndex { get; set; } = 0;
         public int PointsPerCorrect => 50;
+        public bool EnablePointDecay { get; set; } = false;
 
         public MainViewModel()
         {
