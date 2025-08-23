@@ -138,12 +138,19 @@
             </StackPanel>
         </Grid>
 
-        <!-- Fußzeile: Hinweis zur Urheberschaft -->
-        <TextBlock Grid.Row="2"
-                   Text="nach einer tollen Excel-Makro-Vorlage von Thommes Volz programmiert von Matthias Zimmer + ChatGPT"
-                   Foreground="Gray"
-                   HorizontalAlignment="Center"
-                   Margin="0,8,0,0"
-                   FontSize="12" Height="16" VerticalAlignment="Top"/>
+        <!-- Fußzeile: Hinweis zur Urheberschaft und Versionsinfo -->
+        <Grid Grid.Row="2" Margin="0,8,0,0">
+            <TextBlock Text="nach einer tollen Excel-Makro-Vorlage von Thommes Volz programmiert von Matthias Zimmer + ChatGPT"
+                       Foreground="Gray"
+                       HorizontalAlignment="Center"
+                       FontSize="12"
+                       VerticalAlignment="Top"/>
+            <TextBlock Text="Version 1.0 – 23.08.2025"
+                       Foreground="Gray"
+                       FontSize="10"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Bottom"
+                       Margin="0,0,4,0"/>
+        </Grid>
     </Grid>
 </UserControl>
