@@ -186,6 +186,8 @@
                 </TextBlock>
             </StackPanel>
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                <Button Content="{Binding PauseButtonText}" Command="{Binding ToggleDecayPauseCommand}" Margin="6,0"
+                        Visibility="{Binding EnablePointDecay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <Button Content="Weitergeben" Command="{Binding PassTurnCommand}" Margin="6,0"/>
                 <Button Content="Nächste Frage" Command="{Binding NextQuestionCommand}" Margin="6,0"/>
                 <Button Content="Zurück" Command="{Binding BackToStartCommand}" Margin="6,0"/>

@@ -16,6 +16,7 @@ namespace RiskierWas.ViewModels
         private readonly Random _rng = new();
         private int _baseNextPoints = 50;
         private readonly DispatcherTimer _decayTimer = new() { Interval = TimeSpan.FromSeconds(10) };
+        private bool _decayPaused;
 
         private Question? _currentQuestion;
         public Question? CurrentQuestion
@@ -65,6 +66,25 @@ namespace RiskierWas.ViewModels
         public RelayCommand NextQuestionCommand { get; }
         public RelayCommand PassTurnCommand { get; }
         public RelayCommand BackToStartCommand { get; }
+        public RelayCommand ToggleDecayPauseCommand { get; }
+
+        public bool EnablePointDecay => _main.EnablePointDecay;
+
+        public bool DecayPaused
+        {
+            get => _decayPaused;
+            private set
+            {
+                if (_decayPaused != value)
+                {
+                    _decayPaused = value;
+                    OnPropertyChanged(nameof(DecayPaused));
+                    OnPropertyChanged(nameof(PauseButtonText));
+                }
+            }
+        }
+
+        public string PauseButtonText => DecayPaused ? "Fortsetzen" : "Pause";
 
         public GameViewModel(MainViewModel main)
         {
@@ -77,13 +97,14 @@ namespace RiskierWas.ViewModels
             NextQuestionCommand = new RelayCommand(_ => NextQuestion());
             PassTurnCommand = new RelayCommand(_ => PassTurn(), _ => CurrentQuestion != null);
             BackToStartCommand = new RelayCommand(_ => BackToStart());
+            ToggleDecayPauseCommand = new RelayCommand(_ => ToggleDecayPause());
 
             NextQuestion();
         }
 
         private void StartDecayTimer()
         {
-            if (_main.EnablePointDecay)
+            if (_main.EnablePointDecay && !DecayPaused)
             {
                 _decayTimer.Stop();
                 _decayTimer.Start();
@@ -91,6 +112,20 @@ namespace RiskierWas.ViewModels
         }
 
         private void StopDecayTimer() => _decayTimer.Stop();
+
+        private void ToggleDecayPause()
+        {
+            if (DecayPaused)
+            {
+                DecayPaused = false;
+                StartDecayTimer();
+            }
+            else
+            {
+                DecayPaused = true;
+                StopDecayTimer();
+            }
+        }
 
         private void RevealAnswer(object? param)
         {
