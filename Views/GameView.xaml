@@ -180,8 +180,8 @@
         <DockPanel Grid.Row="3" Panel.ZIndex="10" Margin="0,12,0,0">
             <StackPanel Orientation="Vertical">
                 <ProgressBar Height="6" Margin="0,0,0,4" Minimum="0" Maximum="1" Value="{Binding DecayProgress, Mode=OneWay}" Visibility="{Binding EnablePointDecay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                <TextBlock Text="{Binding InfoLine}" Margin="0,0,16,2"/>
-                <TextBlock>
+                <TextBlock Text="{Binding InfoLine}" Margin="0,0,16,2" Foreground="White"/>
+                <TextBlock Foreground="White">
                     <Run Text="Punkte aktuelle Runde: "/>
                     <Run Text="{Binding CurrentTeam.PendingScore}"/>
                 </TextBlock>
