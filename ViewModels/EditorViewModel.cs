@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using System.Windows.Data;
 using Microsoft.Win32;
 using RiskierWas.Models;
 using RiskierWas.Services;
@@ -16,6 +19,23 @@ namespace RiskierWas.ViewModels
         private readonly Random _rng = new();
 
         public ObservableCollection<Question> Questions => _main.Questions;
+        private readonly ICollectionView _filteredQuestions;
+        public ICollectionView FilteredQuestions => _filteredQuestions;
+
+        private bool _filterSelectedOnly;
+        public bool FilterSelectedOnly
+        {
+            get => _filterSelectedOnly;
+            set
+            {
+                if (_filterSelectedOnly == value) return;
+                _filterSelectedOnly = value;
+                OnPropertyChanged(nameof(FilterSelectedOnly));
+                _filteredQuestions.Refresh();
+                MoveQuestionUpCommand.RaiseCanExecuteChanged();
+                MoveQuestionDownCommand.RaiseCanExecuteChanged();
+            }
+        }
 
         private Question? _selectedQuestion;
         public Question? SelectedQuestion
@@ -49,6 +69,13 @@ namespace RiskierWas.ViewModels
         {
             _main = main;
 
+            _filteredQuestions = CollectionViewSource.GetDefaultView(Questions);
+            _filteredQuestions.Filter = o => !FilterSelectedOnly || ((Question)o).Selected;
+
+            foreach (var q in Questions)
+                q.PropertyChanged += Question_PropertyChanged;
+            Questions.CollectionChanged += Questions_CollectionChanged;
+
             BackCommand = new RelayCommand(_ => _main.NavigateToStart());
             SaveCommand = new RelayCommand(_ => SaveToDefault());
             SaveAsCommand = new RelayCommand(_ => SaveAs());
@@ -57,9 +84,9 @@ namespace RiskierWas.ViewModels
             RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => SelectedQuestion != null);
             RemoveQuestionItemCommand = new RelayCommand(q => RemoveQuestion(q as Question), q => q is Question);
             MoveQuestionUpCommand = new RelayCommand(q => MoveQuestion(q as Question, -1),
-                                             q => q is Question question && Questions.IndexOf(question) > 0);
+                                             q => CanMoveQuestion(q as Question, -1));
             MoveQuestionDownCommand = new RelayCommand(q => MoveQuestion(q as Question, 1),
-                                               q => q is Question question && Questions.IndexOf(question) < Questions.Count - 1);
+                                             q => CanMoveQuestion(q as Question, 1));
 
             AddAnswerCommand = new RelayCommand(_ => AddAnswer(),
                                         _ => SelectedQuestion != null && SelectedQuestion.Answers.Count < 16);
@@ -164,16 +191,47 @@ namespace RiskierWas.ViewModels
             MoveQuestionUpCommand.RaiseCanExecuteChanged();
             MoveQuestionDownCommand.RaiseCanExecuteChanged();
         }
+        private bool CanMoveQuestion(Question? q, int delta)
+        {
+            if (q == null) return false;
+            IEnumerable<Question> list = FilterSelectedOnly ? Questions.Where(x => x.Selected) : Questions;
+            var arr = list.ToList();
+            int index = arr.IndexOf(q);
+            if (index < 0) return false;
+            int newIndex = index + delta;
+            return newIndex >= 0 && newIndex < arr.Count;
+        }
 
         private void MoveQuestion(Question? q, int delta)
         {
             if (q == null) return;
-            int oldIndex = Questions.IndexOf(q);
-            int newIndex = oldIndex + delta;
-            if (newIndex < 0 || newIndex >= Questions.Count) return;
-            Questions.Move(oldIndex, newIndex);
+            if (FilterSelectedOnly)
+            {
+                var selected = Questions.Where(x => x.Selected).ToList();
+                int index = selected.IndexOf(q);
+                int targetIndex = index + delta;
+                if (targetIndex < 0 || targetIndex >= selected.Count) return;
+                var other = selected[targetIndex];
+                int i = Questions.IndexOf(q);
+                int j = Questions.IndexOf(other);
+                Swap(i, j);
+            }
+            else
+            {
+                int oldIndex = Questions.IndexOf(q);
+                int newIndex = oldIndex + delta;
+                if (newIndex < 0 || newIndex >= Questions.Count) return;
+                Questions.Move(oldIndex, newIndex);
+            }
             MoveQuestionUpCommand.RaiseCanExecuteChanged();
             MoveQuestionDownCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Swap(int i, int j)
+        {
+            if (i == j) return;
+            Questions.Move(i, j);
+            Questions.Move(j > i ? j - 1 : j + 1, i);
         }
 
         private void AddAnswer()
@@ -190,6 +248,29 @@ namespace RiskierWas.ViewModels
             SelectedQuestion.Answers.Remove(a);
             AddAnswerCommand.RaiseCanExecuteChanged();
             OnPropertyChanged(nameof(SelectedQuestion));
+        }
+
+        private void Questions_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+                foreach (Question q in e.NewItems)
+                    q.PropertyChanged += Question_PropertyChanged;
+            if (e.OldItems != null)
+                foreach (Question q in e.OldItems)
+                    q.PropertyChanged -= Question_PropertyChanged;
+            MoveQuestionUpCommand.RaiseCanExecuteChanged();
+            MoveQuestionDownCommand.RaiseCanExecuteChanged();
+        }
+
+        private void Question_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(Question.Selected))
+            {
+                if (FilterSelectedOnly)
+                    _filteredQuestions.Refresh();
+                MoveQuestionUpCommand.RaiseCanExecuteChanged();
+                MoveQuestionDownCommand.RaiseCanExecuteChanged();
+            }
         }
 
         // ---------- Auswahl-Tools ----------

@@ -31,6 +31,10 @@
                         Margin="0,0,16,0" Padding="10,6" Click="Button_Click"
                         ToolTip="Zufällig 20 Fragen für das nächste Spiel auswählen"/>
 
+                <CheckBox Content="Nur ausgewählte zeigen"
+                          IsChecked="{Binding FilterSelectedOnly}"
+                          Margin="0,0,16,0" VerticalAlignment="Center" Foreground="White"/>
+
                 <Button Content="Speichern"
                         Command="{Binding SaveCommand}"
                         Margin="0,0,8,0" Padding="10,6"
@@ -71,7 +75,7 @@
 
                     <ListBox Grid.Row="1"
                              x:Name="QuestionsList"
-                             ItemsSource="{Binding Questions}"
+                             ItemsSource="{Binding FilteredQuestions}"
                              SelectedItem="{Binding SelectedQuestion}"
                              Background="Transparent"
                              BorderThickness="0"
