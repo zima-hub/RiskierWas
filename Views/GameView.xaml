@@ -100,7 +100,7 @@
                     <!-- Fortschrittsbalken für Punkteverfall direkt unter den Punkten -->
                     <Border Height="8" Margin="0,4,0,0" CornerRadius="4" Background="#333" ClipToBounds="True"
                             Visibility="{Binding EnablePointDecay, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <ProgressBar Height="8" Minimum="0" Maximum="1" Value="{Binding DecayProgress}"
+                        <ProgressBar Height="8" Minimum="0" Maximum="1" Value="{Binding DecayProgress, Mode=OneWay}"
                                      Background="Transparent" BorderThickness="0" Foreground="LightGreen"/>
                     </Border>
                 </StackPanel>
