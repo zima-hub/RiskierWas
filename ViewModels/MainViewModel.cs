@@ -22,6 +22,7 @@ namespace RiskierWas.ViewModels
         public int CurrentTeamIndex { get; set; } = 0;
         public int PointsPerCorrect => 50;
         public bool EnablePointDecay { get; set; } = false;
+        public int PointDecaySeconds { get; set; } = 10;
 
         public MainViewModel()
         {

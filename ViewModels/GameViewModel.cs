@@ -15,7 +15,7 @@ namespace RiskierWas.ViewModels
         private int _nextPoints = 50;
         private readonly Random _rng = new();
         private int _baseNextPoints = 50;
-        private readonly DispatcherTimer _decayTimer = new() { Interval = TimeSpan.FromSeconds(10) };
+        private readonly DispatcherTimer _decayTimer;
         private readonly DispatcherTimer _decayProgressTimer = new() { Interval = TimeSpan.FromMilliseconds(100) };
         private DateTime _decayStartTime;
         private double _decayProgress;
@@ -105,6 +105,7 @@ namespace RiskierWas.ViewModels
         public GameViewModel(MainViewModel main)
         {
             _main = main;
+            _decayTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(_main.PointDecaySeconds) };
             SubscribeTeamEvents();
 
             _decayTimer.Tick += (_, _) =>
