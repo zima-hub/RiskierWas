@@ -38,6 +38,8 @@ namespace RiskierWas.ViewModels
         public RelayCommand AddQuestionCommand { get; }
         public RelayCommand RemoveQuestionCommand { get; }          // löscht SelectedQuestion
         public RelayCommand RemoveQuestionItemCommand { get; }      // löscht per Parameter (Listeneintrag)
+        public RelayCommand MoveQuestionUpCommand { get; }
+        public RelayCommand MoveQuestionDownCommand { get; }
         public RelayCommand AddAnswerCommand { get; }
         public RelayCommand RemoveAnswerCommand { get; }
         public RelayCommand DeselectAllCommand { get; }
@@ -54,6 +56,10 @@ namespace RiskierWas.ViewModels
 
             RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => SelectedQuestion != null);
             RemoveQuestionItemCommand = new RelayCommand(q => RemoveQuestion(q as Question), q => q is Question);
+            MoveQuestionUpCommand = new RelayCommand(q => MoveQuestion(q as Question, -1),
+                                             q => q is Question question && Questions.IndexOf(question) > 0);
+            MoveQuestionDownCommand = new RelayCommand(q => MoveQuestion(q as Question, 1),
+                                               q => q is Question question && Questions.IndexOf(question) < Questions.Count - 1);
 
             AddAnswerCommand = new RelayCommand(_ => AddAnswer(),
                                         _ => SelectedQuestion != null && SelectedQuestion.Answers.Count < 16);
@@ -123,6 +129,8 @@ namespace RiskierWas.ViewModels
             // q.Answers.Add(new Answer { Text = "", Correct = false });
             Questions.Add(q);
             SelectedQuestion = q;
+            MoveQuestionUpCommand.RaiseCanExecuteChanged();
+            MoveQuestionDownCommand.RaiseCanExecuteChanged();
         }
 
         // Löscht die aktuell ausgewählte Frage
@@ -153,6 +161,19 @@ namespace RiskierWas.ViewModels
             }
 
             RemoveQuestionCommand.RaiseCanExecuteChanged();
+            MoveQuestionUpCommand.RaiseCanExecuteChanged();
+            MoveQuestionDownCommand.RaiseCanExecuteChanged();
+        }
+
+        private void MoveQuestion(Question? q, int delta)
+        {
+            if (q == null) return;
+            int oldIndex = Questions.IndexOf(q);
+            int newIndex = oldIndex + delta;
+            if (newIndex < 0 || newIndex >= Questions.Count) return;
+            Questions.Move(oldIndex, newIndex);
+            MoveQuestionUpCommand.RaiseCanExecuteChanged();
+            MoveQuestionDownCommand.RaiseCanExecuteChanged();
         }
 
         private void AddAnswer()
