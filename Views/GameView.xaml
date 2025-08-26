@@ -42,6 +42,7 @@
                                     <Setter Property="Background" Value="#111111"/>
                                     <Setter Property="BorderBrush" Value="#444"/>
                                     <Setter Property="BorderThickness" Value="1"/>
+                                    <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
 
                                     <Style.Triggers>
                                         <!-- Ist dieses Item == CurrentTeam ? Dann gold markieren -->
@@ -58,7 +59,19 @@
 
                                             <Setter Property="BorderBrush" Value="#FFD700"/>
                                             <Setter Property="BorderThickness" Value="3"/>
-                                            <Setter Property="Background" Value="#1a1a1a"/>
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                        <GradientStop Color="#1a1a1a" Offset="0"/>
+                                                        <GradientStop Color="#333333" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <ScaleTransform ScaleX="1.05" ScaleY="1.05"/>
+                                                </Setter.Value>
+                                            </Setter>
                                             <Setter Property="Effect">
                                                 <Setter.Value>
                                                     <DropShadowEffect BlurRadius="10" ShadowDepth="0" Color="#FFD700" Opacity="0.7"/>
@@ -85,9 +98,11 @@
                     <TextBlock Text="Nächste richtige Antwort:" Foreground="White"/>
                     <TextBlock Text="{Binding NextPoints}" Foreground="LightGreen" FontSize="24"/>
                     <!-- Fortschrittsbalken für Punkteverfall direkt unter den Punkten -->
-                    <ProgressBar Height="6" Margin="0,4,0,0" Minimum="0" Maximum="1"
-                                 Value="{Binding DecayProgress, Mode=OneWay}"
-                                 Visibility="{Binding EnablePointDecay, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                    <Border Height="8" Margin="0,4,0,0" CornerRadius="4" Background="#333" ClipToBounds="True"
+                            Visibility="{Binding EnablePointDecay, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <ProgressBar Height="8" Minimum="0" Maximum="1" Value="{Binding DecayProgress}"
+                                     Background="Transparent" BorderThickness="0" Foreground="LightGreen"/>
+                    </Border>
                 </StackPanel>
             </Border>
             <Border CornerRadius="12" Padding="12" Margin="8,0,0,0" Background="#1F2937">
