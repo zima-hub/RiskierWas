@@ -27,6 +27,20 @@ namespace RiskierWas.ViewModels
             set { if (_enablePointDecay != value) { _enablePointDecay = value; OnPropertyChanged(nameof(EnablePointDecay)); } }
         }
 
+        private int _pointDecaySeconds = 10;
+        public int PointDecaySeconds
+        {
+            get => _pointDecaySeconds;
+            set
+            {
+                if (_pointDecaySeconds != value)
+                {
+                    _pointDecaySeconds = value;
+                    OnPropertyChanged(nameof(PointDecaySeconds));
+                }
+            }
+        }
+
         public RelayCommand StartGameCommand { get; }
         public RelayCommand OpenEditorCommand { get; }
         public RelayCommand LoadQuestionsCommand { get; }
@@ -48,6 +62,7 @@ namespace RiskierWas.ViewModels
             RebuildTeams();
 
             _main.EnablePointDecay = EnablePointDecay;
+            _main.PointDecaySeconds = PointDecaySeconds < 1 ? 1 : PointDecaySeconds;
 
             // los geht's
             _main.NavigateToGame();
