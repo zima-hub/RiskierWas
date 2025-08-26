@@ -50,10 +50,10 @@
         <!-- Inhalt: zwei Spalten -->
         <Grid Grid.Row="1" Margin="12,8,12,12">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="380"/>
+                <ColumnDefinition Width="4*"/>
                 <!-- Fragenliste -->
                 <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="6*"/>
                 <!-- Details -->
             </Grid.ColumnDefinitions>
 
@@ -87,32 +87,30 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <!-- Genau EIN Root-Element: DockPanel -->
-                                <DockPanel Margin="0,4">
-                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                                        <Button Content="↑"
-                                                Command="{Binding DataContext.MoveQuestionUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Width="24" Height="24"
-                                                ToolTip="Frage nach oben verschieben"/>
-                                        <Button Content="↓"
-                                                Command="{Binding DataContext.MoveQuestionDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Width="24" Height="24"
-                                                Margin="6,0,0,0"
-                                                ToolTip="Frage nach unten verschieben"/>
-                                        <Button Content="✕"
-                                                Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Width="24" Height="24"
-                                                Margin="6,0,0,0"
-                                                ToolTip="Frage löschen"/>
-                                    </StackPanel>
-
+                                <!-- Genau EIN Root-Element: StackPanel -->
+                                <StackPanel Orientation="Horizontal" Margin="0,4">
                                     <CheckBox IsChecked="{Binding Selected}"
                                               Margin="0,0,8,0"
                                               VerticalAlignment="Center"
                                               ToolTip="Ausgewählt = im nächsten Spiel dabei"/>
+
+                                    <Button Content="↑"
+                                            Command="{Binding DataContext.MoveQuestionUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Width="24" Height="24"
+                                            ToolTip="Frage nach oben verschieben"/>
+                                    <Button Content="↓"
+                                            Command="{Binding DataContext.MoveQuestionDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Width="24" Height="24"
+                                            Margin="6,0,0,0"
+                                            ToolTip="Frage nach unten verschieben"/>
+                                    <Button Content="✕"
+                                            Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Width="24" Height="24"
+                                            Margin="6,0,0,8"
+                                            ToolTip="Frage löschen"/>
 
                                     <TextBlock Text="{Binding Text}"
                                                Foreground="White"
@@ -121,14 +119,14 @@
                                                VerticalAlignment="Center"/>
 
                                     <!-- Kontextmenü (optional) -->
-                                    <DockPanel.ContextMenu>
+                                    <StackPanel.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Frage löschen"
                                                       Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                       CommandParameter="{Binding}"/>
                                         </ContextMenu>
-                                    </DockPanel.ContextMenu>
-                                </DockPanel>
+                                    </StackPanel.ContextMenu>
+                                </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -150,11 +148,13 @@
                                 <DataTemplate>
                                     <!-- EIN Root pro Antwortzeile -->
                                     <DockPanel Margin="0,6">
-                                        <Button Content="Entfernen"
+                                        <Button Content="✕"
                                                 Command="{Binding DataContext.RemoveAnswerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                 CommandParameter="{Binding}"
                                                 DockPanel.Dock="Right"
-                                                Margin="8,0,0,0"/>
+                                                Width="24" Height="24"
+                                                Margin="8,0,0,0"
+                                                ToolTip="Antwort löschen"/>
 
                                         <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="8,0,0,0">
                                             <CheckBox IsChecked="{Binding Correct}" VerticalAlignment="Center" Content="richtig" Foreground="White"/>
