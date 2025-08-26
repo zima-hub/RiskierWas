@@ -89,15 +89,25 @@
                             <DataTemplate>
                                 <!-- Genau EIN Root-Element: DockPanel -->
                                 <DockPanel Margin="0,4">
-                                    <!-- ✕-Button zum direkten Löschen dieses Items -->
-                                    <Button Content="✕"
-                                            DockPanel.Dock="Right"
-                                            Command="{Binding DataContext.RemoveQuestionItemCommand,
-                                                              RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"
-                                            Width="24" Height="24"
-                                            Margin="6,0,0,0"
-                                            ToolTip="Frage löschen"/>
+                                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                                        <Button Content="↑"
+                                                Command="{Binding DataContext.MoveQuestionUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Width="24" Height="24"
+                                                ToolTip="Frage nach oben verschieben"/>
+                                        <Button Content="↓"
+                                                Command="{Binding DataContext.MoveQuestionDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Width="24" Height="24"
+                                                Margin="6,0,0,0"
+                                                ToolTip="Frage nach unten verschieben"/>
+                                        <Button Content="✕"
+                                                Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Width="24" Height="24"
+                                                Margin="6,0,0,0"
+                                                ToolTip="Frage löschen"/>
+                                    </StackPanel>
 
                                     <CheckBox IsChecked="{Binding Selected}"
                                               Margin="0,0,8,0"
@@ -114,8 +124,7 @@
                                     <DockPanel.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Frage löschen"
-                                                      Command="{Binding DataContext.RemoveQuestionItemCommand,
-                                                                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                       CommandParameter="{Binding}"/>
                                         </ContextMenu>
                                     </DockPanel.ContextMenu>
