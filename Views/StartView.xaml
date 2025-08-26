@@ -149,7 +149,7 @@
                        HorizontalAlignment="Center"
                        FontSize="12"
                        VerticalAlignment="Top"/>
-            <TextBlock Text="Version 1.0 – 23.08.2025"
+            <TextBlock Text="Version 1.1 – 26.08.2025"
                        Foreground="Gray"
                        FontSize="10"
                        HorizontalAlignment="Right"
