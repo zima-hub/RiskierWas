@@ -87,46 +87,58 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <!-- Genau EIN Root-Element: StackPanel -->
-                                <StackPanel Orientation="Horizontal" Margin="0,4">
-                                    <CheckBox IsChecked="{Binding Selected}"
+                                <!-- Genau EIN Root-Element: Grid -->
+                                <Grid Margin="0,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <CheckBox Grid.Column="0"
+                                              IsChecked="{Binding Selected}"
                                               Margin="0,0,8,0"
                                               VerticalAlignment="Center"
                                               ToolTip="Ausgewählt = im nächsten Spiel dabei"/>
 
-                                    <Button Content="↑"
+                                    <Button Grid.Column="1" Content="↑"
                                             Command="{Binding DataContext.MoveQuestionUpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
                                             Width="24" Height="24"
                                             ToolTip="Frage nach oben verschieben"/>
-                                    <Button Content="↓"
+                                    <Button Grid.Column="2" Content="↓"
                                             Command="{Binding DataContext.MoveQuestionDownCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                             CommandParameter="{Binding}"
                                             Width="24" Height="24"
                                             Margin="6,0,0,0"
                                             ToolTip="Frage nach unten verschieben"/>
-                                    <Button Content="✕"
-                                            Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"
-                                            Width="24" Height="24"
-                                            Margin="6,0,0,8"
-                                            ToolTip="Frage löschen"/>
 
-                                    <TextBlock Text="{Binding Text}"
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding Text}"
                                                Foreground="White"
                                                TextWrapping="NoWrap"
                                                TextTrimming="CharacterEllipsis"
-                                               VerticalAlignment="Center"/>
+                                               VerticalAlignment="Center"
+                                               Margin="6,0,0,0"/>
+
+                                    <Button Grid.Column="4" Content="✕"
+                                            Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Width="24" Height="24"
+                                            Margin="8,0,0,0"
+                                            ToolTip="Frage löschen"/>
 
                                     <!-- Kontextmenü (optional) -->
-                                    <StackPanel.ContextMenu>
+                                    <Grid.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Frage löschen"
                                                       Command="{Binding DataContext.RemoveQuestionItemCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                       CommandParameter="{Binding}"/>
                                         </ContextMenu>
-                                    </StackPanel.ContextMenu>
-                                </StackPanel>
+                                    </Grid.ContextMenu>
+                                </Grid>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
